@@ -1,76 +1,134 @@
 #include<stdio.h>
-int Q[3];
-int front=-1,rear=-1;
-int max=3;
-void Enqueue();
-void Dequeue();
-void Display();
-void Queue(){
+#include<stdlib.h>
+struct node
+{
+        int info;
+        struct node *link;
+}*rear=NULL;
 
-     printf("Welcome to Queue\n");
-    int n;
-    printf("press 1 for Enqueue,2 for Dequeue,3 for Display\n");
-    scanf("%d",&n);
-    switch(n){
-        case(1):Enqueue();
-        break;
-        case(2):Dequeue();
-        break;
-        case(3):Display();
-        break;
-    }
-    int m;
-    printf("To continue press 1 and To exit press any other number\n");
-    scanf("%d",&m);
-    if(m==1){
-        Queue();
-    }
-    else{
-        return;
-    }
-}
-void Enqueue(){
-    if(front==(rear+1)%max){
-        printf("Queue OverFLow\n");
-        return;
-    }
-    else{
-        if(front==-1){
-            front++;
-        }
-        rear=(rear+1)%max;
-        printf("Enter Element to be inserted\n");
-        scanf("%d",&Q[rear]);
-    }
-}
-void Dequeue(){
-    if(front==rear==-1){
-        printf("Queue UnderFlow\n");
-        return;
-    }
-    else{
+void insert(int item);
+int del();
+void display();
+int isEmpty();
+int peek();
+int main()
+{
+        int choice,item;
+        while(1)
+        {
+                printf("1.Insert\n");
+                printf("2.Delete\n");
+                printf("3.Peek\n");
+                printf("4.Display\n");
+                printf("5.Quit\n");
+                printf("Enter your choice : ");
+                scanf("%d",&choice);
 
-        printf("Dequeued Element is %d\n",Q[front]);
-        front=(front+1)%max;
-    }
-}
-void Display(){
-    if(rear<front){
-        for(int i=front;i<max;i++){
-            printf("%d  ",Q[i]);
+                switch(choice)
+                {
+                 case 1:
+                        printf("\nEnter the element for insertion : ");
+                        scanf("%d",&item);
+                        insert(item);
+                        break;
+                 case 2:
+                        printf("Deleted element is %d\n",del());
+                        break;
+                 case 3:
+                        printf("Item at the front of queue is %d\n",peek());
+                        break;
+                 case 4:
+                        display();
+                        break;
+                 case 5:
+                        exit(1);
+                 default:
+                        printf("\nWrong choice\n");
+                }
         }
-        for(int i=0;i<=rear;i++){
-            printf("%d  ",Q[i]);
+}
+
+void insert(int item)
+{
+        struct node *tmp;
+        tmp=(struct node *)malloc(sizeof(struct node));
+        tmp->info=item;
+        if(tmp==NULL)
+        {
+                printf("\nMemory not available\n");
+                return;
         }
 
-    }
-    else{
-        for(int i=front;i<=rear;i++){
-            printf("%d  ",Q[i]);
+        if( isEmpty() ) /*If queue is empty */
+        {
+                rear=tmp;
+                tmp->link=rear;
         }
-    }
+        else
+        {
+                tmp->link=rear->link;
+                rear->link=tmp;
+                rear=tmp;
+        }
 }
-void main(){
-    printf("SHRUTI PATEL 2100320130165\n");
-    Queue();
+
+int del()
+{
+        int item;
+        struct node *tmp;
+        if( isEmpty() )
+        {
+                printf("Queue underflow\n");
+                exit(1);
+        }
+        if(rear->link==rear)
+        {
+                tmp=rear;
+                rear=NULL;
+        }
+        else
+        {
+                tmp=rear->link;
+                rear->link=rear->link->link;
+        }
+        item=tmp->info;
+        free(tmp);
+        return item;
+}
+
+int peek()
+{
+        if( isEmpty() )
+        {
+                printf("\nQueue underflow\n");
+                exit(1);
+        }
+        return rear->link->info;
+}
+
+int isEmpty()
+{
+        if( rear == NULL )
+                return 1;
+        else
+                return 0;
+}
+
+
+void display()
+{
+        struct node *p;
+        if(isEmpty())
+        {
+                printf("\nQueue is empty\n");
+                return;
+        }
+        printf("Queue is :\n");
+        p=rear->link;
+        do
+        {
+                printf("%d ",p->info);
+                p=p->link;
+        }while(p!=rear->link);
+        printf("\n");
 }
